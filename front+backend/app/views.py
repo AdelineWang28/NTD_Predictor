@@ -19,7 +19,7 @@ def predict(request):
 
             # Forward request to FastAPI
             response = requests.post(
-                "http://127.0.0.1:8001/predict",
+                "http://52.15.141.24:8001/predict",
                 json={"country": country, "year": year}
             )
 
