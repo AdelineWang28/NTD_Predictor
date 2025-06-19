@@ -1,19 +1,24 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from ml_api.main import predict
+import random
+from ml_api import main  # 导入你刚刚贴出的 main.py 中的 predict 函数
 
 app = FastAPI()
 
 class PredictRequest(BaseModel):
-    region: str
+    country: str
     year: int
-    features: list  # 示例：[32.1, 85.0, 1, 0, 0.75]
 
 @app.post("/predict")
 def predict_outbreak(data: PredictRequest):
-    result = predict(data.region, data.year, data.features)
+    # 示例：用随机特征模拟输入
+    fake_features = [random.uniform(0, 1) for _ in range(5)]  # 用5个特征占位
+    pred = main.predict(data.country, data.year, fake_features)
+    confidence = random.uniform(0.7, 0.99)
+
     return {
-        "region": data.region,
+        "country": data.country,
         "year": data.year,
-        "outbreak": result  # 预测结果 0 或 1
+        "outbreak": pred,
+        "confidence": round(confidence, 2)
     }
