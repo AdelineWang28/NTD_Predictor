@@ -1,22 +1,19 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-import random
-import uvicorn
+from ml_api.main import predict
 
 app = FastAPI()
 
 class PredictRequest(BaseModel):
-    country: str  # ← 与前端一致
+    region: str
     year: int
+    features: list  # 示例：[32.1, 85.0, 1, 0, 0.75]
 
 @app.post("/predict")
 def predict_outbreak(data: PredictRequest):
+    result = predict(data.region, data.year, data.features)
     return {
-        "country": data.country,
+        "region": data.region,
         "year": data.year,
-        "outbreak": int(random.random() > 0.5),
-        "confidence": round(random.uniform(0.7, 0.99), 2)  # 可选加上置信度
+        "outbreak": result  # 预测结果 0 或 1
     }
-
-if __name__ == "__main__":
-    uvicorn.run("run_ml_api:app", host="127.0.0.1", port=8001, reload=True)
